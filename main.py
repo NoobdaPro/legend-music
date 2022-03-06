@@ -1,17 +1,11 @@
-import requests
-from pyrogram import idle
 from pyrogram import Client as Bot
+from pyrogram import idle
 
 from callsmusic import run
-from config import API_ID, API_HASH, BOT_TOKEN
-
+from config import API_HASH, API_ID, BOT_TOKEN
 
 bot = Bot(
-    ":memory:",
-    API_ID,
-    API_HASH,
-    bot_token=BOT_TOKEN,
-    plugins=dict(root="handlers")
+    ":memory:", API_ID, API_HASH, bot_token=BOT_TOKEN, plugins=dict(root="handlers")
 )
 
 bot.start()

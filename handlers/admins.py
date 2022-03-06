@@ -1,17 +1,15 @@
 from asyncio.queues import QueueEmpty
-from config import que
-from pyrogram import Client, filters
-from pyrogram.types import Message
-from cache.admins import set
-from helpers.decorators import authorized_users_only, errors
-from helpers.channelmusic import get_chat_id
-from helpers.filters import command, other_filters
-from callsmusic import callsmusic, queues
-from pytgcalls.types.input_stream import InputAudioStream
-from pytgcalls.types.input_stream import InputStream
 
+from pyrogram import Client
+from pyrogram.types import Message
+from pytgcalls.types.input_stream import InputAudioStream, InputStream
+
+from callsmusic import callsmusic, queues
+from helpers.decorators import authorized_users_only, errors
+from helpers.filters import command, other_filters
 
 ACTV_CALLS = []
+
 
 @Client.on_message(command(["pause"]) & other_filters)
 @errors
@@ -41,6 +39,7 @@ async def stop(_, message: Message):
     await callsmusic.pytgcalls.leave_group_call(message.chat.id)
     await message.reply_text("❌ Streaming Is Stopped✨")
 
+
 @Client.on_message(command(["skip"]) & other_filters)
 @errors
 @authorized_users_only
@@ -53,12 +52,12 @@ async def skip(_, message: Message):
         await message.reply_text("❗ Nothing Is Played")
     else:
         queues.task_done(chat_id)
-        
+
         if queues.is_empty(chat_id):
             await callsmusic.pytgcalls.leave_group_call(chat_id)
         else:
             await callsmusic.pytgcalls.change_stream(
-                chat_id, 
+                chat_id,
                 InputStream(
                     InputAudioStream(
                         callsmusic.queues.get(chat_id)["file"],
